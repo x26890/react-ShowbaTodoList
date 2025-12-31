@@ -1,0 +1,119 @@
+/* 全域背景 */
+body {
+  background-color: #f0f4f8;
+  color: #333;
+}
+
+/* 卡片與標頭 */
+.custom-card {
+  border-radius: 15px !important;
+  overflow: hidden;
+  border: none !important;
+}
+
+.custom-header-blue {
+  background-color: #0047AB !important; /* 經典藍 */
+  border-bottom: 5px solid #FFD700;    /* 黃色飾條 */
+}
+
+/* 文字與邊框 */
+.custom-text-blue {
+  color: #0047AB !important;
+}
+
+.custom-border-blue {
+  border: 2px solid #0047AB !important;
+  border-radius: 8px !important;
+}
+
+.custom-border-blue:focus {
+  border-color: #FFD700 !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.3) !important;
+}
+
+/* 按鈕與標籤 */
+.custom-btn-yellow {
+  background-color: #FFD700 !important;
+  color: #0047AB !important;
+  padding: 12px !important;
+  border: none !important;
+}
+
+.custom-btn-yellow:hover {
+  background-color: #e6c200 !important;
+  transform: translateY(-2px);
+}
+
+.custom-tag-yellow {
+  background-color: #FFD700;
+  color: #0047AB;
+  border-radius: 50px;
+}
+
+/* 日曆微調 */
+.custom-calendar {
+  border: none !important;
+  width: 100% !important;
+}
+
+.react-calendar__tile--active {
+  background: #0047AB !important;
+}
+
+.react-calendar__tile--now {
+  background: #FFD700 !important;
+  color: #0047AB !important;
+}
+
+/* --- 勾選刪除線效果 --- */
+.record-item-card {
+  transition: all 0.2s ease;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* 選中狀態：卡片變灰、半透明 */
+.record-item-card.is-selected {
+  background-color: #e9ecef !important;
+  opacity: 0.6;
+}
+
+/* 選中狀態：文字灰色 + 顯眼的刪除線 */
+.selected-text {
+  color: #6c757d !important;
+  text-decoration: line-through;
+  text-decoration-thickness: 3px; /* 增加刪除線厚度 */
+  text-decoration-color: #495057;
+}
+
+.selected-text h5, .selected-text p, .selected-text strong {
+  text-decoration: line-through;
+}
+
+.form-check-input:checked {
+  background-color: #6c757d !important;
+  border-color: #495057 !important;
+}
+
+/* 篩選按鈕樣式 */
+.btn-outline-primary {
+  border-color: #0047AB !important;
+  color: #0047AB !important;
+}
+
+.btn-primary {
+  background-color: #0047AB !important;
+}
+
+/* 針對螢幕寬度小於 576px 的裝置（一般手機） */
+@media (max-width: 576px) {
+  .text-primary.fw-bold {
+    font-size: 1.25rem !important; /* 縮小標題字體 */
+    white-space: nowrap; /* 防止換行擠壓 */
+  }
+
+  /* 讓按鈕區塊在手機上可以水平滾動，避免擠壓到標題 */
+  .d-flex.gap-1.flex-wrap {
+    justify-content: flex-start;
+  }
+}
