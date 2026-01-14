@@ -13,7 +13,6 @@ function MainApp({ user }) {
   const [date, setDate] = useState(new Date());
   const [records, setRecords] = useState([]);
   
-  // 表單與編輯狀態
   const [shift, setShift] = useState('');
   const [content, setContent] = useState('');
   const [note, setNote] = useState('');
@@ -21,11 +20,9 @@ function MainApp({ user }) {
   const [editId, setEditId] = useState(null);
 
   const [filter, setFilter] = useState('全部');
-  const [selectedIds, setSelectedIds] = useState([]);
 
   const employeeId = user.email.split('@')[0];
 
-  // 1. 自動讀取員工姓名
   useEffect(() => {
     const fetchUserName = async () => {
       try {
@@ -41,7 +38,6 @@ function MainApp({ user }) {
     fetchUserName();
   }, [employeeId]);
 
-  // 2. 即時監聽資料庫
   useEffect(() => {
     const q = query(collection(db, "todo-records"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -50,17 +46,15 @@ function MainApp({ user }) {
     return () => unsubscribe();
   }, []);
 
-  // 3. 切換完成狀態與選取邏輯
+  // 💡 修改處：純粹切換 Firebase 資料庫狀態
   const handleToggleRecord = async (e, id, currentCompleted) => {
     if (e.stopPropagation) e.stopPropagation();
     try {
       const docRef = doc(db, "todo-records", id);
       await updateDoc(docRef, { completed: !currentCompleted });
-      setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
     } catch (err) { console.error(err); }
   };
 
-  // 4. 編輯功能邏輯
   const handleEditClick = (e, item) => {
     if (e.stopPropagation) e.stopPropagation();
     setIsEditing(true);
@@ -79,7 +73,6 @@ function MainApp({ user }) {
     setNote('');
   };
 
-  // 5. 提交表單 (新增或更新)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -102,24 +95,27 @@ function MainApp({ user }) {
     } catch (err) { console.error(err); }
   };
 
-  // 6. 刪除選取項目
+  // 💡 修改處：改為刪除所有已勾選項目
   const deleteSelected = async () => {
-    if (selectedIds.length === 0) return;
-    if (window.confirm(`確定要刪除這 ${selectedIds.length} 筆紀錄嗎？`)) {
+    const completedIds = records.filter(r => r.completed).map(r => r.id);
+    if (completedIds.length === 0) {
+      alert("請先勾選已完成的項目再進行刪除");
+      return;
+    };
+    if (window.confirm(`確定要刪除這 ${completedIds.length} 筆已完成的紀錄嗎？`)) {
       try {
-        for (const id of selectedIds) {
+        for (const id of completedIds) {
           await deleteDoc(doc(db, "todo-records", id));
         }
-        setSelectedIds([]);
       } catch (err) { console.error(err); }
     }
   };
 
   const filteredRecords = filter === '全部' ? records : records.filter(r => r.shift === filter);
+  const completedCount = records.filter(r => r.completed).length;
 
   return (
     <div className="container py-3 py-md-5">
-      {/* 頂部導覽 */}
       <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-2">
         <div>
           <h4 className="fw-bold text-primary mb-0"><i className="bi bi-person-circle me-2"></i>{realName}</h4>
@@ -131,7 +127,6 @@ function MainApp({ user }) {
       </div>
 
       <div className="row g-4 d-flex align-items-stretch">
-        {/* 左側：表單 */}
         <div className="col-lg-7 order-1 order-lg-2">
           <div className={`card shadow-lg border-0 h-100 ${isEditing ? 'border-warning border-3' : ''}`}>
             <div className={`${isEditing ? 'bg-warning text-dark' : 'bg-primary text-white'} text-center py-4 transition-all`}>
@@ -179,7 +174,6 @@ function MainApp({ user }) {
           </div>
         </div>
 
-        {/* 右側：日曆 */}
         <div className="col-lg-5 order-2 order-lg-1">
           <div className="card shadow-lg border-0 h-100">
             <div className="bg-primary text-white d-flex justify-content-between align-items-center py-3 px-3">
@@ -202,7 +196,6 @@ function MainApp({ user }) {
         </div>
       </div>
 
-      {/* 下方：歷史紀錄 */}
       <div className="mt-5 pt-4">
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 border-bottom border-3 border-primary pb-3">
           <h2 className="text-primary fw-bold mb-3 mb-md-0 fs-3"><i className="bi bi-clock-history me-2"></i>交接紀錄歷史</h2>
@@ -212,8 +205,8 @@ function MainApp({ user }) {
                 {b}
               </button>
             ))}
-            <button className="btn btn-danger px-3 py-2 ms-md-2 fw-bold d-flex align-items-center gap-2" onClick={deleteSelected} disabled={selectedIds.length === 0}>
-              <i className="bi bi-trash3"></i> 刪除選取 ({selectedIds.length})
+            <button className="btn btn-danger px-3 py-2 ms-md-2 fw-bold d-flex align-items-center gap-2" onClick={deleteSelected} disabled={completedCount === 0}>
+              <i className="bi bi-trash3"></i> 刪除已完成 ({completedCount})
             </button>
           </div>
         </div>
@@ -221,23 +214,20 @@ function MainApp({ user }) {
         <div className="row g-4">
           {filteredRecords.map((item) => (
             <div className="col-md-6 col-lg-4" key={item.id}>
-              <div 
-                className={`card h-100 shadow border-0 transition-all ${item.completed ? 'opacity-50 bg-light' : 'bg-white'}`}
-                style={selectedIds.includes(item.id) ? {boxShadow: '0 0 0 3px #0d6efd'} : {}}
-              >
+              <div className={`card h-100 shadow border-0 transition-all ${item.completed ? 'opacity-50 bg-light' : 'bg-white'}`}>
                 <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3 px-3">
                   <div className="d-flex align-items-center">
                     <input 
                       className="form-check-input ms-0 me-2" 
                       type="checkbox" 
                       style={{ width: '1.4rem', height: '1.4rem', cursor: 'pointer' }}
-                      checked={selectedIds.includes(item.id)} 
+                      // 💡 關鍵修正：現在打勾狀態直接看 Firebase 傳回來的 completed 欄位
+                      checked={item.completed} 
                       onChange={(e) => handleToggleRecord(e, item.id, item.completed)} 
                     />
                     <span className="fw-bold fs-6">{item.date}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2">
-                    {/* 修改後的編輯按鈕：Bootstrap Icon 版 */}
                     <button 
                       className="btn btn-sm btn-light d-flex align-items-center justify-content-center shadow-sm"
                       style={{ borderRadius: '8px', padding: '5px 8px' }}

@@ -1,16 +1,48 @@
 # React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 主要功能 #
+1.班別交接紀錄 (MainApp.jsx)
 
-Currently, two official plugins are available:
+1-1.即時記錄監聽
+    使用Firebase的 onSnapshot 來實現即時更新，不用重新整理
+    就可以看到其他使用者新增、刪除、修改的東西了!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1-2.視覺化日曆
+    使用react-calendar，提供給使用者更直觀的選擇日期跟查看，或是新增事項
 
-## React Compiler
+1-3.分類管理
+   按照各班別(全體、早班、中班、大夜)來篩選出各班別所交接的事情、並且有多選的刪除功能。
+   
+1-4.狀態追蹤 可以標記事項勾選「已完成」時 ，會呈現畫線的刪除效果，讓其他使用者知道這事情已完成。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+================================================================================================
 
-## Expanding the ESLint configuration
+2.即期商品管理 (ExpiryItems.jsx)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2-1.自動排序與提醒
+    清單會依照到期日自動排序，並以顏色區分（過期會顯示紅色）提醒說已經到期了。
+
+2-2.編輯功能
+    支援新增、修改與刪除即期品資料，並提供平滑的編輯視窗跳轉。
+
+================================================================================================
+
+3.安全權限與路由 (App.jsx 和 Login.jsx)
+
+3-1.工號登入系統
+    店員只需要輸入帳號密碼即可登入，原本帳號需要後面要加上Email驗證，不過在Login.jsx這邊有去設定會自動補全 Email 格式進行驗證，簡化操作流程。
+
+3-2.身分保護路徑
+    使用 React Router 的保護機制，未登入使用者將被強制導回登入頁面
+
+3-3.載入狀態處理
+    在確認 Firebase 身份驗證狀態期間會顯示載入動畫，避免畫面閃爍或錯誤跳
+
+================================================================================================
+
+# 使用工具 #
+1.前端框架: React (Hooks)
+2.路由管理: React Router
+3.後端服務: Firebase Authentication (身分驗證), Cloud Firestore (即時資料庫)
+4.UI 樣式: Bootstrap , Bootstrap Icons, SCSS
+5.日曆套件: react-calendar
