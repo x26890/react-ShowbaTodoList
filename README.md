@@ -41,8 +41,8 @@
 ============================================================================================
 
 # 使用工具 #
-1.前端框架: React (Hooks)
-2.路由管理: React Router
-3.後端服務: Firebase Authentication (身分驗證), Cloud Firestore (即時資料庫)
-4.UI 樣式: Bootstrap , Bootstrap Icons, SCSS
-5.日曆套件: react-calendar
+1.前端框架: React (Hooks)  
+2.路由管理: React Router  
+3.後端服務: Firebase Authentication (身分驗證), Cloud Firestore (即時資料庫)  
+4.UI 樣式: Bootstrap , Bootstrap Icons, SCSS  
+5.日曆套件: react-calendar  
