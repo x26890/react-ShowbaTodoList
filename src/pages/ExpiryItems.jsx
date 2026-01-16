@@ -12,6 +12,7 @@ function ExpiryItems() {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
+  //清單會依據到期日自動排序
   useEffect(() => {
     const q = query(collection(db, "expiry-liquor"), orderBy("expiryDate", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -19,6 +20,7 @@ function ExpiryItems() {
     }, (err) => console.error(err));
     return () => unsubscribe();
   }, []);
+
 
   const handleEditClick = (item) => {
     setIsEditing(true);
